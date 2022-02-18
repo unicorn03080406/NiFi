@@ -1,12 +1,9 @@
-# Introduction
-This file covers the available services in the example deployment.
+# Available Services
+This doc covers the available services in the example deployment.
 
-Apache NiFi-related files are provided in [`../nifi`](../nifi) directory.
- 
-Please note that all the services are deployed using [Docker](https://docker.io) engine and it needs to be present in the system.
+Apache NiFi-related files are provided in [`./nifi`](https://github.com/CogStack/CogStack-NiFi/tree/master/nifi) directory.
 
-
-# Available services
+Please note that all the services are deployed using [Docker](https://docker.io) engine and requires docker deamon to be running / functioning. 
 
 ## Primary services
 All the services are defined in `services.yml` file and these are:
@@ -22,13 +19,12 @@ All the services are defined in `services.yml` file and these are:
 - `jupyter-hub` - a single instance of [Jupyter Hub](https://jupyter.org/hub) for serving Jupyter Notebooks for interacting with the data.
 
 ## Optional NLP services
-In addition, there are defined such NLP services:
+In addition, NLP services are:
 - `nlp-medcat-snomed` - same as `nlp-medcat-medmen` but serving a SNOMED CT model,
 - `nlp-gate-bioyodie` - same as `nlp-gate-drugapp` but serving [Bio-YODIE](https://github.com/GateNLP/Bio-YODIE) NLP application.
 
 These services are optional and won't be started by default.
 They were left in the `services.yml` file for informative purposes if one would be interested in deploying these having access to necessary resources.
-
 
 **Important**
 Please note that `nlp-medcat-snomed` and `nlp-gate-bioyodie` NLP services use license-restricted resources and these need to be provided by the user prior running these services.
@@ -36,10 +32,7 @@ Bio-YODIE requires [UMLS](https://www.nlm.nih.gov/research/umls/index.html) reso
 MedCAT SNOMED CT model requires a prepared model based on [SNOMED CT](http://www.snomed.org/) dictionary with the model available in `RES_MEDCAT_SNOMED_PATH` directory.
 These paths can be defined in `.env` file in the deployment directory.
 
-
 For more information on available services resources, please see [README](../services/README.md) in `services` directory.
-
-
 
 ## Security
 **Important**
@@ -48,11 +41,11 @@ Moreover, SSL encryption is also disabled or not set up in the configuration fil
 For more information please see the [README](../security/README.md) in `security` directory.
 
 
-# Deployment
+## Deployment
 The example deployment recipes are defined in `Makefile` file.
 The commands that start services are prefixed with `start-` keyword, similarly the ones to stop are prefixed with `stop`.
 
-## Data ingestion and storage infrastructure
+### Data ingestion and storage infrastructure
 To deploy the data ingestion and storage infrastructure, type:
 ```
 make start-data-infra
@@ -111,15 +104,14 @@ To tear down all the containers and the data persisted in mounted volumes, type:
 make cleanup
 ```
 
-
-# Services description
-All the essential details on the services configuration are defined in `services.yml` file.
+## Individual Service description
+Service configurations are completely defined in the `services.yml` file.
 
 Please note that all the services are running within a private `cognet` Docker network hence the endpoints are all accessible within the deployed services.
 However, for the ease of use, some of the services have their ports bound from container to the host machine.
 
 
-## Samples DB
+### Samples DB
 `samples-db` provides a [PostgreSQL](https://www.postgresql.org/) database that contains sample data to play with. 
 During start-up the data is loaded from a previously generated DB dump.
 
@@ -141,7 +133,7 @@ The tables available in the database are:
 The tables used in the deployment example are marked with `(*)`.
 
 
-## Apache NiFi
+### Apache NiFi
 `nifi` serves a single-node instance of Apache NiFi that includes the data processing engine with user interface for defining data flows and monitoring.
 Since this is a single-node NiFi instance, it also contains the default, embedded [Apache Zookeper](https://zookeeper.apache.org/) instance for managing state.
 
@@ -154,7 +146,7 @@ The available example workflows are covered in [WORKFLOWS](./WORKFLOWS.md) file.
 Alternatively, please refer to [the official Apache NiFi documentation](https://nifi.apache.org/) for more details on actual use of Apache NiFi.
 
 
-## Tika Service
+### Tika Service
 `tika-service` provides document text extraction functionality of [Apache Tika](https://tika.apache.org/).
 [Tika Service](https://github.com/CogStack/tika-service) implements the actual Apache Tika functionality behind a RESTful API.
 
@@ -164,9 +156,9 @@ The Tika service REST API endpoint for processing documents is available at `htt
 For more details on configuration, API definition and example use of Tika Service please refer to [the official documentation](https://github.com/CogStack/tika-service).
 
 
-## NLP Services
+### NLP Services
 
-### NLP API
+#### NLP API
 All the NLP services implement a RESTful API that is defined in [OpenAPI specification](../services/nlp-services/api-specs/openapi.yaml).
 
 The available endpoints are:
@@ -179,7 +171,7 @@ Please see example Apache NiFi [WORKFLOWS](./WORKFLOWS.md) and [user scripts](..
 
 For further details on the used API please refer to the [OpenAPI specification](../services/nlp-services/api-specs/openapi.yaml) for the definition of the request and response payload.
 
-### GATE NLP
+#### GATE NLP
 `nlp-gate-drugapp` serves a simple drug names extraction NLP application using [GATE NLP Service](https://github.com/CogStack/gate-nlp-service).
 This simple application implements annotation of common drugs and medications. 
 It was created using [GATE NLP](https://gate.ac.uk/sale/tao/splitch13.html) suite and uses GATE ANNIE Gazetteer plugin. 
@@ -196,11 +188,11 @@ Although the service won't be accessible from the host machine, but all the serv
 For more information on the GATE NLP Service configuration and use please refer to [the official documentation](https://github.com/CogStack/gate-nlp-service).
 
 
-### MedCAT NLP
+#### MedCAT NLP
 [MedCAT](https://github.com/CogStack/MedCAT) is a named entity recognition and linking application for concept annotation from UMLS or any other source.
 MedCAT deployment consists of [MedCAT NLP Service](https://github.com/CogStack/MedCATservice) serving NLP models via RESTful API and [MedCAT Trainer](https://github.com/CogStack/MedCATtrainer) for collecting annotations and refinement of the NLP models.
 
-### MedCAT Service
+#### MedCAT Service
 `nlp-medcat-medmen` serves a basic UMLS model trained on MedMentions dataset via RESTful API.
 The served model data is available in [`../services/nlp-services/applications/medcat/models/medmen/`](../services/nlp-services/applications/medcat/models/medmen`) directory.
 
@@ -213,7 +205,7 @@ Although the service won't be accessible from the host machine, but all the serv
 For more information on the MedCAT NLP Service configuration and use please refer to [the official documentation](https://github.com/CogStack/MedCATservice).
 
 
-### MedCAT Trainer
+#### MedCAT Trainer
 `medcat-trainer-ui` serves the MedCAT Trainer web application used for training and refining MedCAT NLP models.
 Such trained models can be later saved as files and loaded into MedCAT Service.
 Alternatively, the models can be loaded into custom application.
@@ -228,7 +220,7 @@ To access the MedCAT Trainer user interface and admin panel, one can use the def
 For more information on the MedCAT Trainer  configuration and use please refer to [the official documentation](https://github.com/CogStack/MedCATtrainer).
 
 
-## ELK stack
+### ELK stack
 The example deployment uses [ELK stack](https://www.elastic.co/what-is/elk-stack) from [OpenDistro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/) distribution.
 OpenDistro for Elasticsearch is a fully open-source, free and community-driven fork of Elasticseach.
 It implements many of the commercial X-Pack components functionality, such as advanced security module, alerting module or SQL support. 
@@ -244,7 +236,7 @@ For enabling it and generating self-signed certificates please refer directly to
 The security aspects are covered expensively in [the official OpenDistro for Elasticsearch documentation](https://opendistro.github.io/for-elasticsearch-docs/).
 
 
-### Elasticsearch
+#### Elasticsearch
 Elasticsearch cluster is deployed as a single-node cluster with `elasticsearch-1` service.
 It exposes port `9200` on the container and binds it to the same port on the host machine.
 The service endpoint should be available to all the services running inside the `cognet` Docker network under address `http://elasticsearch-1:9200`.
@@ -255,7 +247,7 @@ However, for manual tailoring the available configuration parameters are availab
 For more information on use of Elasticsearch please refer either to [the official Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html) or [the official OpenDistro for Elasticsearch documentation](https://opendistro.github.io/for-elasticsearch-docs/).
 
 
-### Kibana
+#### Kibana
 `kibana` service implements the Kibana user interface for interacting with the data stored in Elasticsearch cluster. 
 It exposes port `5601` on the container and binds it to the same port on the host machine.
 To access Kibana user interface from web browser on the host (e.g. `localhost`) machine one can use URL: `http://localhost:5601`.
@@ -266,7 +258,7 @@ However, for manual tailoring the available configuration parameters are availab
 For more information on use of Kibana please refer either to [the official Kibana documentation](https://www.elastic.co/guide/en/kibana/current/index.html) or [the official OpenDistro for Elasticsearch documentation](https://opendistro.github.io/for-elasticsearch-docs/).
 
 
-## Jupyter Hub
+### Jupyter Hub
 `jupyter-hub` service provides a single instance of Jupyter Hub to serve Jupyter Notebooks.
 It exposes port `8888` on the container and binds to the same port on the host machine.
 Since `jupyter-hub` is running in the `cognet` Docker network it has access to all services available within it, hence can be used to read data directly from Elasticsearch or query NLP services.
