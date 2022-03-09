@@ -73,5 +73,15 @@ jobs:
           tags: cogstacksystems/nifi-nginx:dev-latest
           push: true
 
+      - name: Build and push Docker Jupyter singleuser image
+        uses: docker/build-push-action@v2
+        with:
+          context : ./services/jupyter-hub
+          file : "./services/jupyter-hub/Dockerfile_singleuser"
+          allow: network.host
+          github-token: ${{ github.token }}
+          tags: cogstacksystems/jupyter-singleuser:${{ env.RELEASE_VERSION }}
+          push: true
+          
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
