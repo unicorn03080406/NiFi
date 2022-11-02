@@ -20,8 +20,15 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
-CA_ROOT_CERT="root-ca.pem"
-CA_ROOT_KEY="root-ca.key"
+if [[ -z "${ROOT_CERTIFICATE_NAME}" ]]; then
+    ROOT_CERTIFICATE_NAME="root-ca"
+    echo "ROOT_CERTIFICATE_NAME not set, defaulting to ROOT_CERTIFICATE_NAME=root-ca"
+else
+    ROOT_CERTIFICATE_NAME=${ROOT_CERTIFICATE_NAME}
+fi
+
+CA_ROOT_CERT=$ROOT_CERTIFICATE_NAME".pem"
+CA_ROOT_KEY=$ROOT_CERTIFICATE_NAME".key"
 
 if [ ! -e $CA_ROOT_CERT ]; then
 	echo "Root CA certificate and key does not exist: $CA_ROOT_CERT , $CA_ROOT_KEY"

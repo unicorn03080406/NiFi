@@ -8,13 +8,13 @@
 
 set -e
 
-ES_CERTIFICATES_FOLDER="./es_certificates/opensearch/"
+OPENSEARCH_ES_CERTIFICATES_FOLDER="./OPENSEARCH_ES_CERTIFICATES/opensearch/"
 
 if [[ -z "${CERTIFICATE_TIME_VAILIDITY_IN_DAYS}" ]]; then
     CERTIFICATE_TIME_VAILIDITY_IN_DAYS=730
     echo "CERTIFICATE_TIME_VAILIDITY_IN_DAYS not set, defaulting to CERTIFICATE_TIME_VAILIDITY_IN_DAYS=730"
 else
-    ES_SUBJ_LINE=$CERTIFICATE_TIME_VAILIDITY_IN_DAYS
+    CERTIFICATE_TIME_VAILIDITY_IN_DAYS=$CERTIFICATE_TIME_VAILIDITY_IN_DAYS
 fi
 
 if [[ -z "${ES_SUBJ_LINE}" ]]; then
@@ -34,7 +34,7 @@ echo "Generating client cert"
 openssl req -new -key admin-key.pem -subj $ES_SUBJ_LINE -out admin.csr
 openssl x509 -req -in admin.csr -CA root-ca.pem -CAkey root-ca.key -CAcreateserial -sha256 -out admin.pem -days $CERTIFICATE_TIME_VAILIDITY_IN_DAYS
 
-mv "./admin.pem" $ES_CERTIFICATES_FOLDER
-mv "./admin.csr" $ES_CERTIFICATES_FOLDER
-mv "./admin-key.pem" $ES_CERTIFICATES_FOLDER
-mv "./admin-key-temp.pem" $ES_CERTIFICATES_FOLDER
+mv "./admin.pem" $OPENSEARCH_ES_CERTIFICATES_FOLDER
+mv "./admin.csr" $OPENSEARCH_ES_CERTIFICATES_FOLDER
+mv "./admin-key.pem" $OPENSEARCH_ES_CERTIFICATES_FOLDER
+mv "./admin-key-temp.pem" $OPENSEARCH_ES_CERTIFICATES_FOLDER
