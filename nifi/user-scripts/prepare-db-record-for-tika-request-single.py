@@ -2,6 +2,7 @@ import traceback
 import io
 import sys
 import os
+import base64
 
 # jython packages
 import java.io
@@ -52,6 +53,7 @@ class PyStreamCallback(StreamCallback):
             if binary_data_property == record_attr_name:
                 # remove the binary content, no need to have a duplicate
                 binary_data = avro_record[binary_data_property]
+                binary_data = base64.b64decode(binary_data)
                 del avro_record[binary_data_property]
                 break
         
@@ -61,14 +63,23 @@ class PyStreamCallback(StreamCallback):
 if flowFile != None:
     DOC_ID_ATTRIBUTE_NAME = "document_id_field"
     BINARY_FIELD_NAME = "binary_field"
+    OUTPUT_TEXT_FIELD_NAME = "output_text_field_name"
+
     doc_id_property = str(context.getProperty(DOC_ID_ATTRIBUTE_NAME))
     binary_data_property = str(context.getProperty(BINARY_FIELD_NAME))
+    output_text_property = str(context.getProperty(OUTPUT_TEXT_FIELD_NAME))
 
     try:
         flowFile = session.write(flowFile, PyStreamCallback())
 
-        avro_record_converted = {str(k) : str(v) for k,v in avro_record.iteritems()}
-        flowFile = session.putAllAttributes(flowFile, avro_record_converted)
+        out_data = {k : str(v) for k,v in avro_record.iteritems()}
+        out_data["avro_keys"] = str(out_data.keys())
+        out_data["output_text_property"] = output_text_property
+        out_data[DOC_ID_ATTRIBUTE_NAME] = doc_id_property
+        out_data[BINARY_FIELD_NAME] = binary_data_property
+        out_data[OUTPUT_TEXT_FIELD_NAME] = output_text_property
+
+        flowFile = session.putAllAttributes(flowFile, out_data)
 
         session.transfer(flowFile, REL_SUCCESS)
     except Exception as exception:
