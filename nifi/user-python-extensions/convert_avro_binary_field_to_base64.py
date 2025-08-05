@@ -7,7 +7,7 @@ from logging import Logger
 
 from avro.datafile import DataFileReader, DataFileWriter
 from avro.io import DatumReader, DatumWriter
-from avro.schema import RecordSchema, Schema, PrimitiveSchema, parse
+from avro.schema import RecordSchema, Schema, parse
 
 from nifiapi.flowfiletransform import FlowFileTransform, FlowFileTransformResult
 from nifiapi.properties import ProcessContext, PropertyDescriptor
